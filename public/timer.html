@@ -1,0 +1,30 @@
+<meta charset="UTF-8">
+<h2>Timer</h2>
+<p id="t">0 mins 0 secs</p>
+
+<button style="background:green" onclick="start()">Start</button>
+<button style="background:red" onclick="clearInterval(i)">Stop</button>
+<button style="background:yellow" onclick="reset()">Reset</button>
+
+<script>
+let s = 0
+let i
+
+function show() {
+  t.textContent = Math.floor(s / 60) + ' mins ' + s % 60 + ' secs'
+}
+
+function start() {
+  clearInterval(i)
+  i = setInterval(() => {
+    s++
+    show()
+  }, 1000)
+}
+
+function reset() {
+  clearInterval(i)
+  s = 0
+  show()
+}
+</script>

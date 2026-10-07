@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Formulario</title>
+<style>
+  body {
+    font-family: sans-serif;
+    max-width: 400px;
+    margin: 60px auto;
+  }
+  label {
+    display: block;
+    margin-top: 16px;
+  }
+  input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-top: 4px;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 20px;
+    padding: 8px 20px;
+  }
+  #resultado {
+    display: none;
+    margin-top: 30px;
+    padding: 16px;
+    background: #f2f2f2;
+    border-radius: 6px;
+  }
+  pre {
+    margin: 0;
+  }
+  .error {
+  display: block;
+  color: red;
+  font-size: 13px;
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+  <h2>Formulario</h2>
+
+<form id="form" novalidate>
+  <label>Username
+    <input type="text" id="username">
+    <span class="error" id="error-username"></span>
+  </label>
+  <label>FullName
+    <input type="text" id="fullName">
+    <span class="error" id="error-fullName"></span>
+  </label>
+  <label>Age
+    <input type="number" id="age" min="0">
+    <span class="error" id="error-age"></span>
+  </label>
+  <button type="submit">Submit</button>
+</form>
+
+<div id="resultado">
+  <p>Request send to DB with below request data</p>
+  <pre id="datos"></pre>
+</div>
+
+<script>
+  const form = document.getElementById('form')
+  const resultado = document.getElementById('resultado')
+  const datos = document.getElementById('datos')
+  const campos = ['username', 'fullName', 'age']
+
+  function leerDatos() {
+    return {
+      username: document.getElementById('username').value.trim(),
+      fullName: document.getElementById('fullName').value.trim(),
+      age: Number(document.getElementById('age').value)
+    }
+  }
+
+  function validar(d) {
+    const errores = {}
+    if (d.username.length < 3) {
+      errores.username = 'El username debe tener al menos 3 caracteres'
+    } else if (/\s/.test(d.username)) {
+      errores.username = 'El username no puede tener espacios'
+    }
+    if (d.fullName.length < 3) {
+      errores.fullName = 'Escribe el nombre completo'
+    } else if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(d.fullName)) {
+      errores.fullName = 'El nombre solo puede tener letras y espacios'
+    }
+    if (document.getElementById('age').value === '') {
+      errores.age = 'La edad es obligatoria'
+    } else if (!Number.isInteger(d.age) || d.age < 1 || d.age > 120) {
+      errores.age = 'La edad debe ser un entero entre 1 y 120'
+    }
+    return errores
+  }
+
+  function mostrarErrores(errores) {
+    campos.forEach(id => {
+      document.getElementById('error-' + id).textContent = errores[id] || ''
+    })
+  }
+
+  function mostrar() {
+    datos.textContent = JSON.stringify(leerDatos(), null, 2)
+  }
+
+  campos.forEach(id => {
+    document.getElementById(id).addEventListener('input', mostrar)
+  })
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const d = leerDatos()
+    const errores = validar(d)
+    mostrarErrores(errores)
+    if (Object.keys(errores).length > 0) {
+      resultado.style.display = 'none'
+      return
+    }
+    alert(JSON.stringify(d))
+    await fetch('/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(d)
+    })
+    resultado.style.display = 'block'
+    mostrar()
+  })
+</script>
