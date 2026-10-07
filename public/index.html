@@ -1,40 +1,9 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
 <meta charset="UTF-8">
-<title>Progress bar</title>
-<style>
-  body { font-family: sans-serif; max-width: 500px; margin: 80px auto; }
-  .barra { position: relative; height: 8px; background: #ccc; border-radius: 4px; margin: 50px 0 30px; }
-  .punto { position: absolute; top: 50%; left: 0%; width: 16px; height: 16px; background: red; border-radius: 50%; transform: translate(-50%, -50%); }
-  .valor { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 14px; color: red; }
-</style>
-</head>
-<body>
-  <h2>Progress bar</h2>
+<h2>Retos</h2>
 
-  <div class="barra">
-    <div class="punto" id="punto">
-      <span class="valor" id="valor">0%</span>
-    </div>
-  </div>
-
-  <label>Input porcentaje:
-    <input type="number" id="porcentaje" min="0" max="100" value="0">
-  </label>
-
-  <script>
-    const input = document.getElementById('porcentaje')
-    const punto = document.getElementById('punto')
-    const valor = document.getElementById('valor')
-
-    input.addEventListener('input', () => {
-      let p = Number(input.value)
-      if (p < 0) p = 0
-      if (p > 100) p = 100
-      punto.style.left = p + '%'
-      valor.textContent = p + '%'
-    })
-  </script>
-</body>
-</html>
+<ul>
+  <li><a href="/barra.html">Progress bar</a></li>
+  <li><a href="/form.html">Formulario</a></li>
+  <li><a href="/timer.html">Timer</a></li>
+  <li><a href="/navbar.html">Navbar</a></li>
+</ul>
