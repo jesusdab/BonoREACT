@@ -1,0 +1,74 @@
+<meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-4">
+  <button class="btn btn-secondary btn-sm" onclick="location.href='/'">Atrás</button>
+  <h2 class="mt-3">Rick and Morty</h2>
+
+  <input id="buscar" class="form-control mb-3" placeholder="Buscar por nombre" oninput="nuevaBusqueda()">
+
+  <div id="lista" class="row"></div>
+  <p id="vacio" class="text-danger"></p>
+
+  <button id="ant" class="btn btn-primary" onclick="anterior()">Anterior</button>
+  <span id="info" class="mx-2"></span>
+  <button id="sig" class="btn btn-primary" onclick="siguiente()">Siguiente</button>
+</div>
+
+<script>
+let pagina = 1
+let total = 1
+
+function nuevaBusqueda() {
+  pagina = 1
+  cargar()
+}
+
+function anterior() {
+  pagina--
+  cargar()
+}
+
+function siguiente() {
+  pagina++
+  cargar()
+}
+
+async function cargar() {
+  const nombre = document.getElementById('buscar').value
+  const url = 'https://rickandmortyapi.com/api/character?page=' + pagina + '&name=' + encodeURIComponent(nombre)
+  const res = await fetch(url)
+  const lista = document.getElementById('lista')
+
+  if (!res.ok) {
+    lista.innerHTML = ''
+    document.getElementById('vacio').textContent = 'No se encontraron personajes'
+    document.getElementById('info').textContent = ''
+    document.getElementById('ant').disabled = true
+    document.getElementById('sig').disabled = true
+    return
+  }
+
+  const datos = await res.json()
+  total = datos.info.pages
+  document.getElementById('vacio').textContent = ''
+
+  lista.innerHTML = datos.results.map(p => `
+    <div class="col-6 col-md-3 mb-3">
+      <div class="card h-100">
+        <img src="${p.image}" class="card-img-top">
+        <div class="card-body">
+          <h6 class="card-title">${p.name}</h6>
+          <p class="card-text small">${p.species} - ${p.status}</p>
+        </div>
+      </div>
+    </div>
+  `).join('')
+
+  document.getElementById('info').textContent = 'Página ' + pagina + ' de ' + total
+  document.getElementById('ant').disabled = pagina <= 1
+  document.getElementById('sig').disabled = pagina >= total
+}
+
+cargar()
+</script>
